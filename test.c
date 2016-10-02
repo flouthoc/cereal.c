@@ -19,6 +19,8 @@ int main(){
 	struct iovec *vector;
 	status = cereal(&vector, 1, "ui32", e);
 	decereal(&vector, 1, "ui32", &f);
+
+	printf("%lu\n", (unsigned long)f);
 	
 	/*b = (uint32_t *)(vector[0].iov_base);
 	printf("%lu", (unsigned long)b[1]);

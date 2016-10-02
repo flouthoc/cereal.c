@@ -61,9 +61,12 @@ static int _de_cereal_core(struct iovec **user_vector, size_t items, char *forma
 			printf("here\n");
 
 			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
-				uint32_t f;
-				f = *(uint32_t *)((*user_vector)[i].iov_base);
-				printf("%lu\n", (unsigned long)f);
+				//uint32_t f;
+				uint32_t *buf_uint32 = malloc(sizeof(uint32_t)); 
+				buf_uint32 =  va_arg(ap, uint32_t*);
+				*buf_uint32 = *(uint32_t *)((*user_vector)[i].iov_base);
+				//printf("%lu\n", (unsigned long)f);
+
 			//}
 
 
