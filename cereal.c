@@ -56,7 +56,32 @@ static int _de_cereal_core(struct iovec **user_vector, size_t items, char *forma
 		buf = _cereal_utils_rightTrim(buf);
 
 
-		if(strstr(buf, "ui32")){
+		if(strstr(buf, "ui32[")){
+
+			printf("here\n");
+
+			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
+				//uint32_t f;
+
+				int j;
+				uint32_t f;
+				uint32_t *buf_array, *store_array;
+				size_t arraysize = _cereal_parse_arraysize(buf);
+				store_array = va_arg(ap, uint32_t *);
+				//buf_array = (uint32_t *)calloc(arraysize, sizeof(uint32_t));
+				//buf_array = (uint32_t *)((*user_vector)[i].iov_base);
+				//printf("%lu\n", (unsigned long)((uint32_t *)((*user_vector)[i].iov_base))[0]);
+
+				for(j=0; j<arraysize; j++)
+					store_array[j] = ((uint32_t *)((*user_vector)[i].iov_base))[j];
+
+				//printf("%lu\n", (unsigned long)(uint32_t *)(*user_vector)[i].iov_base[0]);
+
+			//}
+
+
+
+		} else if(strstr(buf, "ui32")){
 
 			printf("here\n");
 
