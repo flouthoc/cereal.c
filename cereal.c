@@ -21,6 +21,8 @@ int decereal(struct iovec **user_vector, size_t items, char *format, ...){
 
 }
 
+
+
 static int _de_cereal_core(struct iovec **user_vector, size_t items, char *format, va_list ap){
 
 	size_t i;
