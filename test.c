@@ -2,6 +2,11 @@
 #include <stdio.h>
 #include <assert.h>
 #include <stdlib.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+#include <unistd.h>
+
 
 
 struct book{
@@ -17,18 +22,57 @@ int main(){
 	int status, iterator;
 
 	struct iovec *vector;
+	struct iovec readVector[10];
+
 
 	/*--test for uint32 array -- */
 	{
 
+		int file;
 		uint32_t ui32_dest_array[10];
 		uint32_t ui32_source_array[10];
+		uint32_t ui32_buffer[10];
 
-		for(iterator = 0; iterator<10; iterator++)
-			ui32_source_array[iterator] = rand();
+		for(iterator = 0; iterator<10; iterator++){
+			//ui32_source_array[iterator] = rand();
+			//ui32_source_array[iterator] %= 10;
+			ui32_source_array[iterator] = 3;
+		}
+
+		readVector[0].iov_base = ui32_buffer;
+		readVector[0].iov_len = 10 * sizeof(uint32_t);
 
 		vector = NULL;
 		status = cereal(&vector, 1, "ui32[10]", ui32_source_array);
+
+		file = open("data", O_RDWR | O_CREAT);
+
+		if(file < 0)
+			perror("File");
+
+		if((writev(file, vector, 1)) == -1)
+			perror("Vector write");
+
+		close(file);
+
+		file = open("data", O_RDONLY);
+
+		if(file < 0)
+			perror("File");
+
+		if((readv(file, readVector, 1)) == -1)
+			perror("Vector read only");
+
+		for(iterator = 0; iterator < 10; iterator ++){
+			printf("%d\n", ui32_buffer[iterator]);
+		}
+
+		close(file);
+
+
+
+
+
 		decereal(&vector, 1, "ui32[10]", &ui32_dest_array);
 
 		//printf("%lu\n", (unsigned long)f[0]);
