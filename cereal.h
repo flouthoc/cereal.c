@@ -18,7 +18,7 @@
 */
 
 //int cereal_write(struct iovec **, size_t , char *, ...);
-//int decereal_read(struct iovec **, size_t, char *, ...);
+int decereal_read_struct(struct iovec **, size_t, char *, ...);
 int cereal(struct iovec **, size_t , char *, ...);
 int decereal(struct iovec **, size_t , char *, ...);
 //int cereal_write()

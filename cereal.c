@@ -7,6 +7,7 @@ static size_t _cereal_parse_arraysize(char *format);
 static char * _cereal_utils_leftTrim(char *str);
 static char * _cereal_utils_rightTrim(char *str);
 static int _de_cereal_core(struct iovec **user_vector, size_t items, char *format, va_list);
+static int _de_cereal_read_core(struct iovec **user_vector, size_t items, char *format, va_list);
 
 
 int decereal(struct iovec **user_vector, size_t items, char *format, ...){
@@ -20,6 +21,270 @@ int decereal(struct iovec **user_vector, size_t items, char *format, ...){
 	return status;
 
 }
+
+int decereal_read_struct(struct iovec **user_vector, size_t items, char *format, ...){
+
+	int status;
+	va_list ap;
+	va_start(ap, format);
+	(*user_vector) = malloc(items * sizeof(struct iovec));
+	status = _de_cereal_read_core(user_vector, items, format, ap);
+	va_end(ap);
+	//*user_vector = iov;
+	return status;
+
+}
+
+static int _de_cereal_read_core(struct iovec **user_vector, size_t items, char *format, va_list ap){
+
+	size_t i;
+	size_t j;
+	size_t k;
+	size_t m;
+	char *buf;
+	char *buf_head;
+	size_t length = strlen(format);
+	buf_head = malloc(100);
+	buf = buf_head;
+	memset(buf, 0, 100);
+	//uint32_t buf_uint32;
+	//buf_uint32 = va_arg(ap, uint32_t);
+	//printf("%lu", (unsigned long)buf_uint32);	
+	j=0;
+	for(i=0; i<items; i++){
+
+		m = 0;
+		buf = buf_head;
+		while(j < length && format[j] != ','){
+
+			buf[m] = format[j];
+			m++;
+			j++;
+		}
+
+		if(format[j] == ',')
+			j++;
+
+		buf[m] = '\0';
+		buf = _cereal_utils_leftTrim(buf);
+		buf = _cereal_utils_rightTrim(buf);
+
+
+		if(strstr(buf, "ui32[")){
+
+			printf("here in struct core\n");
+
+			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
+				//uint32_t f;
+
+				int j;
+				uint32_t f;
+				uint32_t *buf_array, *store_array;
+				size_t arraysize = _cereal_parse_arraysize(buf);
+				store_array = va_arg(ap, uint32_t *);
+				//buf_array = (uint32_t *)calloc(arraysize, sizeof(uint32_t));
+				//buf_array = (uint32_t *)((*user_vector)[i].iov_base);
+				//printf("%lu\n", (unsigned long)((uint32_t *)((*user_vector)[i].iov_base))[0]);
+
+				//for(j=0; j<arraysize; j++)
+				//	store_array[j] = ((uint32_t *)((*user_vector)[i].iov_base))[j];
+				(*user_vector)[i].iov_base = store_array;
+				(*user_vector)[i].iov_len = arraysize * sizeof(uint32_t);
+
+				//printf("%lu\n", (unsigned long)(uint32_t *)(*user_vector)[i].iov_base[0]);
+
+			//}
+
+
+
+		}else if(strstr(buf, "ui32")){
+
+			printf("here\n");
+
+			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
+				//uint32_t f;
+				uint32_t *buf_uint32 = malloc(sizeof(uint32_t)); 
+				buf_uint32 =  va_arg(ap, uint32_t*);
+				//*buf_uint32 = *(uint32_t *)((*user_vector)[i].iov_base);
+				(*user_vector)[i].iov_base = buf_uint32;
+				(*user_vector)[i].iov_len = 1 * sizeof(uint32_t);
+				//printf("%lu\n", (unsigned long)f);
+
+			//}
+
+
+
+		}else if(strstr(buf, "ui64[")){
+
+			printf("here\n");
+
+			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
+				//uint32_t f;
+
+				int j;
+				uint64_t f;
+				uint64_t *buf_array, *store_array;
+				size_t arraysize = _cereal_parse_arraysize(buf);
+				store_array = va_arg(ap, uint64_t *);
+				//buf_array = (uint32_t *)calloc(arraysize, sizeof(uint32_t));
+				//buf_array = (uint32_t *)((*user_vector)[i].iov_base);
+				//printf("%lu\n", (unsigned long)((uint32_t *)((*user_vector)[i].iov_base))[0]);
+
+				(*user_vector)[i].iov_base = store_array;
+				(*user_vector)[i].iov_len = arraysize * sizeof(uint64_t);
+
+				//printf("%lu\n", (unsigned long)(uint32_t *)(*user_vector)[i].iov_base[0]);
+
+			//}
+
+
+
+		}else if(strstr(buf, "ui64")){
+
+			printf("here\n");
+
+			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
+				//uint32_t f;
+				uint64_t *buf_uint64 = malloc(sizeof(uint64_t)); 
+				buf_uint64 =  va_arg(ap, uint64_t*);
+				(*user_vector)[i].iov_base = buf_uint64;
+				(*user_vector)[i].iov_len = 1 * sizeof(uint64_t);
+				//printf("%lu\n", (unsigned long)f);
+
+			//}
+
+
+
+		}else if(strstr(buf, "ui16[")){
+
+			printf("here\n");
+
+			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
+				//uint32_t f;
+
+				int j;
+				uint16_t f;
+				uint16_t *buf_array, *store_array;
+				size_t arraysize = _cereal_parse_arraysize(buf);
+				store_array = va_arg(ap, uint16_t *);
+				//buf_array = (uint32_t *)calloc(arraysize, sizeof(uint32_t));
+				//buf_array = (uint32_t *)((*user_vector)[i].iov_base);
+				//printf("%lu\n", (unsigned long)((uint32_t *)((*user_vector)[i].iov_base))[0]);
+
+				(*user_vector)[i].iov_base = store_array;
+				(*user_vector)[i].iov_len = arraysize * sizeof(uint16_t);
+				//printf("%lu\n", (unsigned long)(uint32_t *)(*user_vector)[i].iov_base[0]);
+
+			//}
+
+
+
+		}else if(strstr(buf, "ui16")){
+
+			printf("here\n");
+
+			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
+				//uint32_t f;
+				uint16_t *buf_uint16 = malloc(sizeof(uint16_t)); 
+				buf_uint16 =  va_arg(ap, uint16_t*);
+				(*user_vector)[i].iov_base = buf_uint16;
+				(*user_vector)[i].iov_len = 1 * sizeof(uint16_t);
+				//printf("%lu\n", (unsigned long)f);
+
+			//}
+
+
+
+		}else if(strstr(buf, "ui8[")){
+
+			printf("here\n");
+
+			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
+				//uint32_t f;
+
+				int j;
+				uint8_t f;
+				uint8_t *buf_array, *store_array;
+				size_t arraysize = _cereal_parse_arraysize(buf);
+				store_array = va_arg(ap, uint8_t *);
+				//buf_array = (uint32_t *)calloc(arraysize, sizeof(uint32_t));
+				//buf_array = (uint32_t *)((*user_vector)[i].iov_base);
+				//printf("%lu\n", (unsigned long)((uint32_t *)((*user_vector)[i].iov_base))[0]);
+
+				(*user_vector)[i].iov_base = store_array;
+				(*user_vector)[i].iov_len = arraysize * sizeof(uint8_t);
+
+				//printf("%lu\n", (unsigned long)(uint32_t *)(*user_vector)[i].iov_base[0]);
+
+			//}
+
+
+
+		}else if(strstr(buf, "ui8")){
+
+			printf("here\n");
+
+			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
+				//uint32_t f;
+				uint8_t *buf_uint8 = malloc(sizeof(uint8_t)); 
+				buf_uint8 =  va_arg(ap, uint8_t*);
+				(*user_vector)[i].iov_base = buf_uint8;
+				(*user_vector)[i].iov_len = 1 * sizeof(uint8_t);
+				//printf("%lu\n", (unsigned long)f);
+
+			//}
+
+
+
+		}else if(strstr(buf, "char[")){
+
+			printf("here\n");
+
+			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
+				//uint32_t f;
+
+				int j;
+				char f;
+				char *buf_array, *store_array;
+				size_t arraysize = _cereal_parse_arraysize(buf);
+				store_array = va_arg(ap, char *);
+				//buf_array = (uint32_t *)calloc(arraysize, sizeof(uint32_t));
+				//buf_array = (uint32_t *)((*user_vector)[i].iov_base);
+				//printf("%lu\n", (unsigned long)((uint32_t *)((*user_vector)[i].iov_base))[0]);
+
+				(*user_vector)[i].iov_base = store_array;
+				(*user_vector)[i].iov_len = arraysize * sizeof(char);
+
+				//printf("%lu\n", (unsigned long)(uint32_t *)(*user_vector)[i].iov_base[0]);
+
+			//}
+
+
+
+		}else if(strstr(buf, "char")){
+
+			printf("here\n");
+
+			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
+				//uint32_t f;
+				char *buf_char = malloc(sizeof(char)); 
+				buf_char =  va_arg(ap, char *);
+				(*user_vector)[i].iov_base = buf_char;
+				(*user_vector)[i].iov_len = 1 * sizeof(char);
+				//printf("%lu\n", (unsigned long)f);
+
+			//}
+
+
+
+		}
+
+
+
+	}
+
+}
+
 
 
 
