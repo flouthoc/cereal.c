@@ -91,9 +91,12 @@ int main(){
 	/*--test for disk-io- multiple parameters -- */
 	{
 
+			printf("before file open \n");
+
 		int file;
-		uint8_t ui8_source = 3;
+		uint8_t ui8_source = 5;
 		uint8_t ui8_dest;
+		uint8_t b;
 
 		uint32_t ui32_dest_array[10];
 		uint32_t ui32_source_array[10];
@@ -106,26 +109,34 @@ int main(){
 		}
 
 		vector = NULL;
-		status = cereal(&vector, 2, "ui32[10],ui8", ui32_source_array, &ui8_source);
+		status = cereal(&vector, 2, "ui32[10],ui8", ui32_source_array, ui8_source);
+
+		//printf("%d\n", vector[1].)
+		//b = *(vector[0].iov_base);
+		//printf("8bit number %lu\n", (unsigned long)b);
+
+		printf("before file open \n");
 
 		file = open("data", O_RDWR | O_CREAT);
 
 		if(file < 0)
 			perror("File");
 
-		if((writev(file, vector, 1)) == -1)
+		if((writev(file, vector, 2)) == -1)
 			perror("Vector write");
 
 		close(file);
 
-		decereal_read_struct(&readVector, 2, "ui32[10],ui8", ui32_dest_array, &ui8_dest);
+		printf("before de-cereal\n");
+
+		decereal_read_struct(&readVector, 2, "ui32[10],ui8",ui32_dest_array, &ui8_dest);
 
 		file = open("data", O_RDONLY);
 
 		if(file < 0)
 			perror("File");
 
-		if((readv(file, readVector, 1)) == -1)
+		if((readv(file, readVector, 2)) == -1)
 			perror("Vector read only");
 
 		close(file);
@@ -150,9 +161,10 @@ int main(){
 		for(iterator = 0; iterator<10; iterator++)
 			assert( ui32_dest_array[iterator] == ui32_source_array[iterator]);
 
+		printf("%u\n", ui8_dest);
 		assert(ui8_source == ui8_dest);
 
-		printf("Disk IO array test passed for array size 10 and datatype uint32_t\n");
+		printf("Disk IO array test passed for multiple parameters");
 
 	}
 	/*----end test for disk-io-multiple parameters---*/
@@ -374,6 +386,28 @@ int main(){
 	}
 	/*----end test for uint8--*/
 
+		/*--test for multiple parameters-- */
+	{
+
+		uint32_t ui32_dest;
+		uint32_t ui32_source;
+		uint8_t ui8_dest;
+		uint8_t ui8_source;
+		
+		ui8_source = rand();
+		ui32_source = rand();
+
+		vector = NULL;
+		status = cereal(&vector, 2, "ui8,ui32", ui8_source, ui32_source);
+		decereal(&vector, 2, "ui8,ui32", &ui8_dest, &ui32_dest);
+
+		assert( ui8_dest == ui8_source);
+		assert( ui32_dest == ui32_source);
+
+		printf("multiple parameters 8 & 32 bit passed test passed\n");
+
+	}
+	/*----end test for multiple paramaters--*/
 
 
 

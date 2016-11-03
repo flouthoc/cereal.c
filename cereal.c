@@ -47,9 +47,11 @@ static int _de_cereal_read_core(struct iovec **user_vector, size_t items, char *
 	buf_head = malloc(100);
 	buf = buf_head;
 	memset(buf, 0, 100);
+
+	printf("inside decereal\n");
 	//uint32_t buf_uint32;
 	//buf_uint32 = va_arg(ap, uint32_t);
-	//printf("%lu", (unsigned long)buf_uint32);	
+	//printf("%lu", (unsigned long)buf_uint32);
 	j=0;
 	for(i=0; i<items; i++){
 
@@ -222,11 +224,11 @@ static int _de_cereal_read_core(struct iovec **user_vector, size_t items, char *
 
 		}else if(strstr(buf, "ui8")){
 
-			printf("here\n");
+			printf("here-ui8\n");
 
 			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
 				//uint32_t f;
-				uint8_t *buf_uint8 = malloc(sizeof(uint8_t)); 
+				uint8_t *buf_uint8 = malloc(sizeof(uint8_t));
 				buf_uint8 =  va_arg(ap, uint8_t*);
 				(*user_vector)[i].iov_base = buf_uint8;
 				(*user_vector)[i].iov_len = 1 * sizeof(uint8_t);
@@ -540,7 +542,7 @@ int cereal(struct iovec **user_vector, size_t items, char *format, ...){
 	va_start(ap, format);
 	status = _cereal_core(iov, items, format, ap);
 	va_end(ap);
-	*user_vector = iov;
+	(*user_vector) = iov;
 	return status;
 }
 
@@ -562,6 +564,8 @@ static int _cereal_core(struct iovec *iov, size_t items, char *format, va_list a
 		//printf("%lu", (unsigned long)buf_uint32);	
 		j=0;
 		for(i=0; i<items; i++){
+
+				printf("hitting cereal loop\n");
 
 				m = 0;
 				buf = buf_head;
@@ -738,10 +742,10 @@ static int _cereal_core(struct iovec *iov, size_t items, char *format, va_list a
 				else if(!strcmp(buf, "ui8")){
 
 					printf("Just parsed a ui8\n");
-
+					
 					uint8_t *buf_uint8 = malloc(sizeof(uint8_t)); 
 					*buf_uint8 = (uint8_t)va_arg(ap, int);
-					//printf("%lu", (unsigned long)(*buf_uint32));
+					//printf("%u\n", (unsigned short)(*buf_uint8));
 					iov[i].iov_base = buf_uint8;
 					iov[i].iov_len = sizeof(uint8_t);
 
