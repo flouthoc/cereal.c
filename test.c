@@ -169,6 +169,75 @@ int main(){
 	}
 	/*----end test for disk-io-multiple parameters---*/
 
+	/*--test for disk-io string -- */
+	{
+
+			printf("before file open \n");
+
+		int file;
+		char str_source[] = "Hello";
+		char str_dest[10];
+
+
+		vector = NULL;
+		status = cereal(&vector, 1, "char[6]", str_source);
+
+		//printf("%d\n", vector[1].)
+		//b = *(vector[0].iov_base);
+		//printf("8bit number %lu\n", (unsigned long)b);
+
+		printf("before file open \n");
+
+		file = open("data", O_RDWR | O_CREAT);
+
+		if(file < 0)
+			perror("File");
+
+		if((writev(file, vector, 1)) == -1)
+			perror("Vector write");
+
+		close(file);
+
+		printf("before de-cereal\n");
+
+		decereal_read_struct(&readVector, 1, "char[6]", str_dest);
+
+		file = open("data", O_RDONLY);
+
+		if(file < 0)
+			perror("File");
+
+		if((readv(file, readVector, 1)) == -1)
+			perror("Vector read only");
+
+		close(file);
+
+
+
+
+
+		//decereal(&vector, 1, "ui32[10]", &ui32_dest_array);
+
+		//printf("%lu\n", (unsigned long)f[0]);
+		
+		/*b = (uint32_t *)(vector[0].iov_base);
+		printf("%lu", (unsigned long)b[1]);
+
+		f = *(uint32_t *)(vector[1].iov_base);
+		printf("%lu", (unsigned long)f);*/
+
+		//printf("%lu\n", (unsigned long)f[0]);
+		//printf("%lu\n", (unsigned long)f[1]);
+
+		for(iterator = 0; iterator<6; iterator++)
+			assert( str_source[iterator] == str_dest[iterator]);
+
+
+		printf("Disk IO array test passed string");
+
+	}
+	/*----end test for disk-io-string---*/
+
 
 	/*--test for uint32 array -- */
 	{
