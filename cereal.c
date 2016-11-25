@@ -24,6 +24,7 @@ int decereal(struct iovec **user_vector, size_t items, char *format, ...){
 
 int decereal_read_struct(struct iovec **user_vector, size_t items, char *format, ...){
 
+
 	int status;
 	va_list ap;
 	va_start(ap, format);
@@ -285,6 +286,8 @@ static int _de_cereal_read_core(struct iovec **user_vector, size_t items, char *
 
 	}
 
+	free(buf_head);
+
 }
 
 
@@ -530,6 +533,7 @@ static int _de_cereal_core(struct iovec **user_vector, size_t items, char *forma
 
 
 	}
+	free(buf_head);
 
 }
 
