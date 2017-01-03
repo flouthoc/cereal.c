@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 static int _cereal_core(struct iovec *, size_t items, char *format, va_list);
+static int _cereal_free_core(struct iovec*, size_t items);
 static size_t _cereal_parse_arraysize(char *format);
 static char * _cereal_utils_leftTrim(char *str);
 static char * _cereal_utils_rightTrim(char *str);
@@ -106,7 +107,7 @@ static int _de_cereal_read_core(struct iovec **user_vector, size_t items, char *
 
 			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
 				//uint32_t f;
-				uint32_t *buf_uint32 = malloc(sizeof(uint32_t)); 
+				uint32_t *buf_uint32;
 				buf_uint32 =  va_arg(ap, uint32_t*);
 				//*buf_uint32 = *(uint32_t *)((*user_vector)[i].iov_base);
 				(*user_vector)[i].iov_base = buf_uint32;
@@ -148,7 +149,7 @@ static int _de_cereal_read_core(struct iovec **user_vector, size_t items, char *
 
 			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
 				//uint32_t f;
-				uint64_t *buf_uint64 = malloc(sizeof(uint64_t)); 
+				uint64_t *buf_uint64;
 				buf_uint64 =  va_arg(ap, uint64_t*);
 				(*user_vector)[i].iov_base = buf_uint64;
 				(*user_vector)[i].iov_len = 1 * sizeof(uint64_t);
@@ -188,7 +189,7 @@ static int _de_cereal_read_core(struct iovec **user_vector, size_t items, char *
 
 			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
 				//uint32_t f;
-				uint16_t *buf_uint16 = malloc(sizeof(uint16_t)); 
+				uint16_t *buf_uint16;
 				buf_uint16 =  va_arg(ap, uint16_t*);
 				(*user_vector)[i].iov_base = buf_uint16;
 				(*user_vector)[i].iov_len = 1 * sizeof(uint16_t);
@@ -229,7 +230,7 @@ static int _de_cereal_read_core(struct iovec **user_vector, size_t items, char *
 
 			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
 				//uint32_t f;
-				uint8_t *buf_uint8 = malloc(sizeof(uint8_t));
+				uint8_t *buf_uint8;
 				buf_uint8 =  va_arg(ap, uint8_t*);
 				(*user_vector)[i].iov_base = buf_uint8;
 				(*user_vector)[i].iov_len = 1 * sizeof(uint8_t);
@@ -270,7 +271,7 @@ static int _de_cereal_read_core(struct iovec **user_vector, size_t items, char *
 
 			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
 				//uint32_t f;
-				char *buf_char = malloc(sizeof(char)); 
+				char *buf_char;
 				buf_char =  va_arg(ap, char *);
 				(*user_vector)[i].iov_base = buf_char;
 				(*user_vector)[i].iov_len = 1 * sizeof(char);
@@ -359,7 +360,7 @@ static int _de_cereal_core(struct iovec **user_vector, size_t items, char *forma
 
 			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
 				//uint32_t f;
-				uint32_t *buf_uint32 = malloc(sizeof(uint32_t)); 
+				uint32_t *buf_uint32;
 				buf_uint32 =  va_arg(ap, uint32_t*);
 				*buf_uint32 = *(uint32_t *)((*user_vector)[i].iov_base);
 				//printf("%lu\n", (unsigned long)f);
@@ -399,7 +400,7 @@ static int _de_cereal_core(struct iovec **user_vector, size_t items, char *forma
 
 			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
 				//uint32_t f;
-				uint64_t *buf_uint64 = malloc(sizeof(uint64_t)); 
+				uint64_t *buf_uint64; 
 				buf_uint64 =  va_arg(ap, uint64_t*);
 				*buf_uint64 = *(uint64_t *)((*user_vector)[i].iov_base);
 				//printf("%lu\n", (unsigned long)f);
@@ -439,7 +440,7 @@ static int _de_cereal_core(struct iovec **user_vector, size_t items, char *forma
 
 			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
 				//uint32_t f;
-				uint16_t *buf_uint16 = malloc(sizeof(uint16_t)); 
+				uint16_t *buf_uint16; 
 				buf_uint16 =  va_arg(ap, uint16_t*);
 				*buf_uint16 = *(uint16_t *)((*user_vector)[i].iov_base);
 				//printf("%lu\n", (unsigned long)f);
@@ -479,7 +480,7 @@ static int _de_cereal_core(struct iovec **user_vector, size_t items, char *forma
 
 			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
 				//uint32_t f;
-				uint8_t *buf_uint8 = malloc(sizeof(uint8_t)); 
+				uint8_t *buf_uint8; 
 				buf_uint8 =  va_arg(ap, uint8_t*);
 				*buf_uint8 = *(uint8_t *)((*user_vector)[i].iov_base);
 				//printf("%lu\n", (unsigned long)f);
@@ -519,7 +520,7 @@ static int _de_cereal_core(struct iovec **user_vector, size_t items, char *forma
 
 			//if((*user_vector)[i].iov_len == sizeof(unsigned long)){
 				//uint32_t f;
-				char *buf_char = malloc(sizeof(char)); 
+				char *buf_char; 
 				buf_char =  va_arg(ap, char *);
 				*buf_char = *(int *)((*user_vector)[i].iov_base);
 				//printf("%lu\n", (unsigned long)f);
@@ -549,6 +550,22 @@ int cereal(struct iovec **user_vector, size_t items, char *format, ...){
 	(*user_vector) = iov;
 	return status;
 }
+
+void free_cereald_vector(struct iovec **user_vector, size_t items){
+
+	int status;
+	status = _cereal_free_core(*user_vector, items);
+	free(*user_vector);
+}
+
+static int _cereal_free_core(struct iovec *iov, size_t items){
+
+	size_t i;
+	for(i=0; i<items; i++)
+		free(iov[i].iov_base);
+}
+
+
 
 
 static int _cereal_core(struct iovec *iov, size_t items, char *format, va_list ap){

@@ -21,4 +21,5 @@
 int decereal_read_struct(struct iovec **, size_t, char *, ...);
 int cereal(struct iovec **, size_t , char *, ...);
 int decereal(struct iovec **, size_t , char *, ...);
+void free_cereald_vector(struct iovec **, size_t);
 //int cereal_write()

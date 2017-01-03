@@ -50,6 +50,7 @@ int main(){
 			perror("Vector write");
 
 		close(file);
+		free_cereald_vector(&vector, 1);
 
 		decereal_read_struct(&readVector, 1, "ui32[10]", ui32_dest_array);
 
@@ -62,6 +63,7 @@ int main(){
 			perror("Vector read only");
 
 		close(file);
+		free(readVector);
 
 
 
@@ -125,6 +127,8 @@ int main(){
 		if((writev(file, vector, 2)) == -1)
 			perror("Vector write");
 
+		free_cereald_vector(&vector, 2);
+
 		close(file);
 
 		printf("before de-cereal\n");
@@ -140,6 +144,8 @@ int main(){
 			perror("Vector read only");
 
 		close(file);
+
+		free(readVector);
 
 
 
@@ -197,6 +203,7 @@ int main(){
 			perror("Vector write");
 
 		close(file);
+		free_cereald_vector(&vector, 1);
 
 		printf("before de-cereal\n");
 
@@ -211,6 +218,7 @@ int main(){
 			perror("Vector read only");
 
 		close(file);
+		free(readVector);
 
 
 
@@ -260,6 +268,7 @@ int main(){
 		status = cereal(&vector, 1, "ui32[10]", ui32_source_array);
 
 		decereal(&vector, 1, "ui32[10]", &ui32_dest_array);
+		free_cereald_vector(&vector,1);
 
 		//printf("%lu\n", (unsigned long)f[0]);
 		
@@ -293,6 +302,7 @@ int main(){
 		vector = NULL;
 		status = cereal(&vector, 1, "ui32", ui32_source);
 		decereal(&vector, 1, "ui32", &ui32_dest);
+		free_cereald_vector(&vector,1);
 
 		assert( ui32_dest == ui32_source);
 
@@ -313,6 +323,7 @@ int main(){
 		vector = NULL;
 		status = cereal(&vector, 1, "ui64[10]", ui64_source_array);
 		decereal(&vector, 1, "ui64[10]", &ui64_dest_array);
+		free_cereald_vector(&vector,1);
 
 		//printf("%lu\n", (unsigned long)f[0]);
 		
@@ -344,6 +355,7 @@ int main(){
 		vector = NULL;
 		status = cereal(&vector, 1, "ui64", ui64_source);
 		decereal(&vector, 1, "ui64", &ui64_dest);
+		free_cereald_vector(&vector,1);
 
 		assert( ui64_dest == ui64_source);
 
@@ -365,6 +377,8 @@ int main(){
 		vector = NULL;
 		status = cereal(&vector, 1, "ui8[10]", ui8_source_array);
 		decereal(&vector, 1, "ui8[10]", &ui8_dest_array);
+
+		free_cereald_vector(&vector,1);
 
 		//printf("%lu\n", (unsigned long)f[0]);
 		
@@ -397,6 +411,8 @@ int main(){
 		status = cereal(&vector, 1, "ui8", ui8_source);
 		decereal(&vector, 1, "ui8", &ui8_dest);
 
+		free_cereald_vector(&vector,1);
+
 		assert( ui8_dest == ui8_source);
 
 		printf("uint8 test passed\n");
@@ -414,6 +430,8 @@ int main(){
 		vector = NULL;
 		status = cereal(&vector, 1, "char[10]", char_source_array);
 		decereal(&vector, 1, "char[10]", &char_dest_array);
+
+		free_cereald_vector(&vector,1);
 
 		//printf("%lu\n", (unsigned long)f[0]);
 		
@@ -448,6 +466,8 @@ int main(){
 		status = cereal(&vector, 1, "char", char_source);
 		decereal(&vector, 1, "char", &char_dest);
 
+		free_cereald_vector(&vector,1);
+
 		assert( char_dest == char_source);
 
 		printf("char test passed\n");
@@ -469,6 +489,8 @@ int main(){
 		vector = NULL;
 		status = cereal(&vector, 2, "ui8,ui32", ui8_source, ui32_source);
 		decereal(&vector, 2, "ui8,ui32", &ui8_dest, &ui32_dest);
+
+		free_cereald_vector(&vector,2);
 
 		assert( ui8_dest == ui8_source);
 		assert( ui32_dest == ui32_source);
