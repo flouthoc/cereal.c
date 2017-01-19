@@ -476,7 +476,6 @@ static int _cereal_core(struct iovec *iov, size_t items, char *format, va_list a
 					
 					uint8_t *buf_uint8 = malloc(sizeof(uint8_t)); 
 					*buf_uint8 = (uint8_t)va_arg(ap, int);
-					//printf("%u\n", (unsigned short)(*buf_uint8));
 					iov[i].iov_base = buf_uint8;
 					iov[i].iov_len = sizeof(uint8_t);
 
